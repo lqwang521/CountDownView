@@ -39,10 +39,15 @@
 
 - (void)stopCountDown;
 
+- (void)adjustCoundDownTimer:(NSTimer *)timer;
+
+- (void)setCountDownTimeInterval:(NSTimeInterval)interval
+                         timerId:(NSString *)timerId;
+
 @end
 
 @protocol ZQCountDownViewDelegate <NSObject>
 
-- (void)countDownDidFinished;
+- (void)countDownDidFinished:(ZQCountDownView *)view;
 
 @end

@@ -7,20 +7,21 @@
 //
 
 #import "ZQCountDownView.h"
+#import "QYKTimer.h"
 
 @interface ZQCountDownView ()
 
 //显示小时
-@property (nonatomic) UILabel *hourLabel;
+@property (nonatomic, strong) UILabel *hourLabel;
 // 显示分钟
-@property (nonatomic) UILabel *minuteLabel;
+@property (nonatomic, strong) UILabel *minuteLabel;
 // 显示秒
-@property (nonatomic) UILabel *secondLabel;
+@property (nonatomic, strong) UILabel *secondLabel;
 
 // 显示时间的冒号集合， 可以更改这个集合内冒号的颜色， 字体等
-@property (nonatomic) NSArray *colonsArray;
+@property (nonatomic, strong) NSArray *colonsArray;
 
-@property (nonatomic) NSTimer *timer;
+@property (nonatomic, copy) NSString *timerId;
 // 用于展示的秒， 分钟， 小时
 @property (nonatomic, assign) int hour;
 @property (nonatomic, assign) int minute;
@@ -300,9 +301,10 @@
     }
 }
 
-- (void)setCountDownTimeInterval:(NSTimeInterval)countDownTimeInterval
+- (void)setCountDownTimeInterval:(NSTimeInterval)interval
+                         timerId:(NSString *)timerId
 {
-    _countDownTimeInterval = countDownTimeInterval;
+    _countDownTimeInterval = interval;
     if (_countDownTimeInterval < 0)
     {
         _countDownTimeInterval = 0;
@@ -310,13 +312,36 @@
     _second = (int)_countDownTimeInterval % 60;
     _minute = ((int)_countDownTimeInterval / 60) % 60;
     _hour = _countDownTimeInterval / 3600;
-     [self setHourText:[NSString stringWithFormat:@"%02d", _hour]];
+    [self setHourText:[NSString stringWithFormat:@"%02d", _hour]];
     _minuteLabel.text = [NSString stringWithFormat:@"%02d", _minute];
     _secondLabel.text = [NSString stringWithFormat:@"%02d", _second];
-    if (_countDownTimeInterval > 0 && !_timer)
+    if (_countDownTimeInterval > 0 )//&& !_timer
     {
-        [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
-//        [self.timer fire];
+        //        [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+        id timer = [QYKTimer resetTimerTask:timerId invokeTask:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self adjustCoundDownTimer:nil];
+            });
+        } finishTask:^{
+            [self stopCountDown];
+        }];
+        
+        if (!timer) {
+            _timerId = [QYKTimer execTask:^{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self adjustCoundDownTimer:nil];
+                });
+            }
+                                    start:interval
+                                 interval:1
+                                  repeats:YES
+                                    async:YES
+                                     name:timerId
+                                     type:QYKTimerTypeCutDown
+                               finishTask:^{
+                [self stopCountDown];
+            }];
+        }
     }
 }
 
@@ -325,25 +350,24 @@
     _hourLabel.layer.borderWidth = _minuteLabel.layer.borderWidth = _secondLabel.layer.borderWidth = 0.5;
 }
 
-- (NSTimer *)timer
-{
-    if (!_timer)
-    {
-        _timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(adjustCoundDownTimer:) userInfo:nil repeats:YES];
-    }
-    return _timer;
-}
+//- (NSTimer *)timer
+//{
+//    if (!_timer)
+//    {
+//        _timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(adjustCoundDownTimer:) userInfo:nil repeats:YES];
+//    }
+//    return _timer;
+//}
 
 - (void)adjustCoundDownTimer:(NSTimer *)timer
 {
-    _countDownTimeInterval --;
     if (_minute == 0 && _hour > 0)
     {
         _hour -= 1;
         _minute = 60;
         [self setHourText:[NSString stringWithFormat:@"%02d", _hour]];
     }
-
+    
     if (_second == 0 && _minute > 0)
     {
         _second = 60;
@@ -362,10 +386,16 @@
     
     if (_second <= 0 && _minute <= 0 && _hour <= 0)
     {
-        [_timer invalidate];
-        _timer = nil;
-        if (_delegate && [_delegate respondsToSelector:@selector(countDownDidFinished)]) {
-            [_delegate countDownDidFinished];
+        //        [_timer invalidate];
+        //        _timer = nil;
+        
+        // 1. 先取消定时任务
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [QYKTimer cancelTask:self.timerId];
+        });
+        
+        if (_delegate && [_delegate respondsToSelector:@selector(countDownDidFinished:)]) {
+            [_delegate countDownDidFinished:self];
         }
     }
 }
@@ -373,8 +403,9 @@
 - (void)stopCountDown
 {
     [self removeObservers];
-    [_timer invalidate];
-    _timer = nil;
+    //    [_timer invalidate];
+    //    _timer = nil;
+    [QYKTimer cancelTask:self.timerId];
 }
 
 #pragma mark Observers and methods

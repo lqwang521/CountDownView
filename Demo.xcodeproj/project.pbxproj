@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12699D45256BBF6A009EAAE4 /* QYKTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 12699D44256BBF6A009EAAE4 /* QYKTimer.m */; };
 		DF6074F41B70934B00E27133 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DF6074F31B70934B00E27133 /* main.m */; };
 		DF6074F71B70934B00E27133 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DF6074F61B70934B00E27133 /* AppDelegate.m */; };
 		DF6074FA1B70934B00E27133 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF6074F91B70934B00E27133 /* ViewController.m */; };
@@ -28,6 +29,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		12699D43256BBF6A009EAAE4 /* QYKTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QYKTimer.h; sourceTree = "<group>"; };
+		12699D44256BBF6A009EAAE4 /* QYKTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QYKTimer.m; sourceTree = "<group>"; };
 		DF6074EE1B70934B00E27133 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF6074F21B70934B00E27133 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DF6074F31B70934B00E27133 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -126,6 +129,8 @@
 		DF6075171B70939B00E27133 /* CountDownView */ = {
 			isa = PBXGroup;
 			children = (
+				12699D43256BBF6A009EAAE4 /* QYKTimer.h */,
+				12699D44256BBF6A009EAAE4 /* QYKTimer.m */,
 				DF6075181B70939B00E27133 /* ZQCountDownView.h */,
 				DF6075191B70939B00E27133 /* ZQCountDownView.m */,
 			);
@@ -193,6 +198,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -233,6 +239,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF6074FA1B70934B00E27133 /* ViewController.m in Sources */,
+				12699D45256BBF6A009EAAE4 /* QYKTimer.m in Sources */,
 				DF6074F71B70934B00E27133 /* AppDelegate.m in Sources */,
 				DF6074F41B70934B00E27133 /* main.m in Sources */,
 				DF60751A1B70939B00E27133 /* ZQCountDownView.m in Sources */,
